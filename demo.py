@@ -1,6 +1,8 @@
 from utils import *
 from darknet import Darknet
 import cv2
+import numpy as np
+
 
 def demo(cfgfile, weightfile):
     m = Darknet(cfgfile)
@@ -12,6 +14,8 @@ def demo(cfgfile, weightfile):
         namesfile = 'data/voc.names'
     elif m.num_classes == 80:
         namesfile = 'data/coco.names'
+    elif m.num_classes == 9418:
+        namesfile = 'data/9k.names'
     else:
         namesfile = 'data/names'
     class_names = load_class_names(namesfile)
@@ -19,15 +23,16 @@ def demo(cfgfile, weightfile):
     use_cuda = 1
     if use_cuda:
         m.cuda()
-
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("Unable to open camera")
-        exit(-1)
+    # cap = cv2.VideoCapture(0)
+    # if not cap.isOpened():
+    #     print("Unable to open camera")
+    #     exit(-1)
 
     while True:
-        res, img = cap.read()
+        # res, img = cap.read()
+        res = 1
         if res:
+            img = np.asarray(Image.open('data/person.jpg').convert('RGB'))
             sized = cv2.resize(img, (m.width, m.height))
             bboxes = do_detect(m, sized, 0.5, 0.4, use_cuda)
             print('------')
